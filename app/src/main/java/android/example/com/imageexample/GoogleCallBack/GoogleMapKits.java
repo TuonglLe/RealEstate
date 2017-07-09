@@ -169,7 +169,7 @@ public class GoogleMapKits implements OnMapReadyCallback, GoogleMap.OnCameraIdle
     @Override
     public void update(Cursor onScreenEstateCursor) {
         if(onScreenEstateCursor == null || onScreenEstateCursor.getCount() == 0){
-            Log.d(LOG_TAG, "onScreenEstateCursor == null");
+            Log.d(LOG_TAG, onScreenEstateCursor == null ? "onScreenEstateCursor == null" : "onScreenEstateCursor.getCount() == 0" );
             return;
         }
 

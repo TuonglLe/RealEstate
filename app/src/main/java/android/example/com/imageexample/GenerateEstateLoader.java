@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.example.com.imageexample.Modal.Contracts;
 import android.example.com.imageexample.Modal.Estate.Estate;
+import android.example.com.imageexample.Modal.EstateGenerator;
 import android.example.com.imageexample.ObserverPattern.EstatePublisher.EstatesPublisher;
 import android.example.com.imageexample.Utils.Constants;
 import android.example.com.imageexample.Utils.ContentProviderUtils;
@@ -92,7 +93,6 @@ public class GenerateEstateLoader extends AsyncTaskLoader<Object> {
 
         }
 
-
         return initCursor;
     }
 
@@ -119,33 +119,28 @@ public class GenerateEstateLoader extends AsyncTaskLoader<Object> {
      * @param initCursor
      */
     private void generateNewEsates(Cursor initCursor){
-
-        Cursor imagesCursor = getContext().getContentResolver().query(
-                Contracts.Image.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-
         int needEstatesCount = MAX_ESTATES - initCursor.getCount();
         for(int i = 0; i < needEstatesCount; i++){
             double randLat = Utils.getRandom(minLat, maxLat);
             double randLng = Utils.getRandom(maxLng, minLng);
+            Estate estate = EstateGenerator.generateEstate(new LatLng(randLat, randLng));
+            Log.d(LOG_TAG, estate == null ? "ranomEstate == null": estate.toString());
 
-            Address address = LocationUtils.getAddress(getContext(), new LatLng(randLat, randLng));
-            if(address != null){
-                ContentValues estateValues = ContentProviderUtils.createContentValue(getContext(), address);
-                if(estateValues != null){
-                    getContext().getContentResolver().insert(
-                            Contracts.Estate.CONTENT_URI,
-                            estateValues
-                    );
-                }
-                String placeID = estateValues.getAsString(Contracts.Estate.PLACE_ID);
+            if (estate != null) {
+
+                insertEstateIntoTable(estate);
                 //--Generate 2 random images for estate
-                generate2RandomImagesForEstate(placeID, imagesCursor);
+                Cursor imagesCursor = getContext().getContentResolver().query(
+                        Contracts.Image.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+                generate2RandomImagesForEstate(estate.getPlaceID(), imagesCursor);
             }
+
+
 
         }
     }
@@ -186,5 +181,24 @@ public class GenerateEstateLoader extends AsyncTaskLoader<Object> {
             );
         }
 
+    }
+
+    private void insertEstateIntoTable(Estate estate) {
+        if(estate == null) {
+            return;
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Contracts.Estate.ADDRESS, estate.getAddress());
+            contentValues.put(Contracts.Estate.LATITUDE, estate.getLat());
+            contentValues.put(Contracts.Estate.LONGTITUDE, estate.getLng());
+            contentValues.put(Contracts.Estate.POSTAL_CODE, estate.getPostalCode());
+            contentValues.put(Contracts.Estate.PLACE_ID, estate.getPlaceID());
+            contentValues.put(Contracts.Estate.PRICE, estate.getPrice());
+
+            getContext().getContentResolver().insert(
+                    Contracts.Estate.CONTENT_URI,
+                    contentValues
+            );
+        }
     }
 }

@@ -36,8 +36,8 @@
                                     android:layout_marginBottom="@dimen/on_screen_view_holder_text_view_card_top_bottom"
                                     android:layout_marginLeft="@dimen/on_screen_view_holder_text_view_card_margin_left_right"
                                     android:layout_marginRight="@dimen/on_screen_view_holder_text_view_card_margin_left_right"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="@dimen/on_screen_view_holder_text_view_text_size_address"
+                                    android:textStyle="bold"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                                     tools:text="Hello" />
 
                                 <TextView
@@ -48,10 +48,7 @@
                                     android:layout_alignParentRight="true"
                                     android:layout_marginBottom="@dimen/on_screen_view_holder_text_view_card_top_bottom"
                                     android:layout_marginRight="@dimen/on_screen_view_holder_text_view_card_margin_left_right"
-                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                    android:textColor="@android:color/darker_gray"
-                                    android:textSize="@dimen/on_screen_view_holder_text_view_text_size_price"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
                         </RelativeLayout>
                 </LinearLayout>
 

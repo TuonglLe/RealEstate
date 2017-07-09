@@ -22,18 +22,4 @@ public class Utils {
         return min + (max - min) * new Random().nextDouble();
     }
 
-
-
-    public static String getAddress(Context context, LatLng latLng){
-        Geocoder geocoder = new Geocoder(context);
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            return addresses.get(0).getAddressLine(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
 }

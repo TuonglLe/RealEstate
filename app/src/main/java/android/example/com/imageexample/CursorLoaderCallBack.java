@@ -42,8 +42,6 @@ public class CursorLoaderCallBack implements LoaderManager.LoaderCallbacks<Curso
     private LatLngBounds latLngBounds;
     private LatLng northest, southwest;
     private double minLat, minLng, maxLat, maxLng;
-//    private GoogleMap googleMap;
-//    private List<Marker> markers;
 
 
 
@@ -88,113 +86,117 @@ public class CursorLoaderCallBack implements LoaderManager.LoaderCallbacks<Curso
 
         switch (loader.getId()){
             case ESTATE_LOADER_ID:
-                if(cursor.getCount() < GoogleMapKits.MAX_MARKERS){
-                    if(latLngBounds == null){
-                        return;
-                    }
-                    final int neededEstate = GoogleMapKits.MAX_MARKERS - cursor.getCount();
-                    AsyncTask asyncTask = new AsyncTask() {
-                        @Override
-                        protected Object doInBackground(Object[] params) {
+                handleEstateLoaderRequest(cursor);
+                break;
+//                if(cursor.getCount() < GoogleMapKits.MAX_MARKERS){
+//                    if(latLngBounds == null){
+//                        return;
+//                    }
+//                    final int neededEstate = GoogleMapKits.MAX_MARKERS - cursor.getCount();
+//                    AsyncTask asyncTask = new AsyncTask() {
+//                        @Override
+//                        protected Object doInBackground(Object[] params) {
+//
+//                            for(int i = 0; i < neededEstate; i++) {
+//                                Address address = null;
+//                                while (address == null) {
+//                                    double randomLat = Utils.getRandom(minLat, maxLat);
+//                                    double randomLng = Utils.getRandom(minLng, maxLng);
+//                                    LatLng randomLatLng = new LatLng(randomLat, randomLng);
+//                                    address = LocationUtils.getAddress(context, randomLatLng);
+//                                }
+//                                double actualLat = address.getLatitude();
+//                                double actualLng = address.getLongitude();
+//                                String placeID = LocationUtils.getPlaceID(context, actualLat, actualLng);
+//                                Estate estate = new Estate.Builder().setAddress(address.getAddressLine(0))
+//                                        .setPostalCode(address.getPostalCode())
+//                                        .setPrice(Utils.getRandom(Estate.MIN_PRICE, Estate.MAX_PRICE))
+//                                        .setPlaceId(placeID)
+//                                        .setLat(actualLat)
+//                                        .setLng(actualLng)
+//                                        .build();
+//                                Log.d(LOG_TAG, estate.toString());
+//                                context.getContentResolver().insert(Contracts.Estate.CONTENT_URI, ContentProviderUtils.createContentValue(estate));
+//
+//                                Cursor imageCursor = context.getContentResolver().query(
+//                                        Contracts.Image.CONTENT_URI,
+//                                        null,
+//                                        null,
+//                                        null,
+//                                        null
+//                                );
+//
+//                                if(imageCursor == null){
+//                                    Log.d(LOG_TAG, "imageCursor == null");
+//                                }else{
+//                                    int count = imageCursor.getCount();
+//                                    Log.d(LOG_TAG, "imageCursor: " + count);
+//
+//                                    int random1 = -1;
+//                                    int random2 = -1;
+//
+//                                    while (random1 == random2){
+//                                        random1 = new Random().nextInt(count - 1);
+//                                        random2 = new Random().nextInt(count - 1);
+//                                    }
+//                                    String link1 = "";
+//                                    String link2 = "";
+//                                    if(imageCursor.moveToPosition(random1)){
+//                                        link1 = imageCursor.getString(Contracts.Image.INDEX_LINK);
+//                                    }
+//                                    if(imageCursor.moveToPosition(random2)){
+//                                        link2 = imageCursor.getString(Contracts.Image.INDEX_LINK);
+//                                    }
+//                                    imageCursor.close();
+//
+//                                    ContentValues values1 = new ContentValues();
+//                                    values1.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
+//                                    values1.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link1);
+//                                    context.getContentResolver().insert(
+//                                            Contracts.EstateAndImage.CONTENT_URI,
+//                                            values1
+//                                    );
 
-                            for(int i = 0; i < neededEstate; i++) {
-                                Address address = null;
-                                while (address == null) {
-                                    double randomLat = Utils.getRandom(minLat, maxLat);
-                                    double randomLng = Utils.getRandom(minLng, maxLng);
-                                    LatLng randomLatLng = new LatLng(randomLat, randomLng);
-                                    address = LocationUtils.getAddress(context, randomLatLng);
-                                }
-                                double actualLat = address.getLatitude();
-                                double actualLng = address.getLongitude();
-                                String placeID = LocationUtils.getPlaceID(context, actualLat, actualLng);
-                                Estate estate = new Estate.Builder().setAddress(address.getAddressLine(0))
-                                        .setPostalCode(address.getPostalCode())
-                                        .setPrice(Utils.getRandom(Estate.MIN_PRICE, Estate.MAX_PRICE))
-                                        .setPlaceId(placeID)
-                                        .setLat(actualLat)
-                                        .setLng(actualLng)
-                                        .build();
-                                Log.d(LOG_TAG, estate.toString());
-                                context.getContentResolver().insert(Contracts.Estate.CONTENT_URI, ContentProviderUtils.createContentValue(estate));
+//                                    ContentValues values2 = new ContentValues();
+//                                    values2.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
+//                                    values2.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link2);
+//                                    context.getContentResolver().insert(
+//                                            Contracts.EstateAndImage.CONTENT_URI,
+//                                            values2
+//                                    );
+//
+//
+//
+//                                }
+//
+//                            }
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        protected void onPostExecute(Object o) {
+//                            super.onPostExecute(o);
+//                            onLoaderReset(loader);
+//                        }
+//                    };
 
-                                Cursor imageCursor = context.getContentResolver().query(
-                                        Contracts.Image.CONTENT_URI,
-                                        null,
-                                        null,
-                                        null,
-                                        null
-                                );
-
-                                if(imageCursor == null){
-                                    Log.d(LOG_TAG, "imageCursor == null");
-                                }else{
-                                    int count = imageCursor.getCount();
-                                    Log.d(LOG_TAG, "imageCursor: " + count);
-
-                                    int random1 = -1;
-                                    int random2 = -1;
-
-                                    while (random1 == random2){
-                                        random1 = new Random().nextInt(count - 1);
-                                        random2 = new Random().nextInt(count - 1);
-                                    }
-                                    String link1 = "";
-                                    String link2 = "";
-                                    if(imageCursor.moveToPosition(random1)){
-                                        link1 = imageCursor.getString(Contracts.Image.INDEX_LINK);
-                                    }
-                                    if(imageCursor.moveToPosition(random2)){
-                                        link2 = imageCursor.getString(Contracts.Image.INDEX_LINK);
-                                    }
-
-                                    ContentValues values1 = new ContentValues();
-                                    values1.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
-                                    values1.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link1);
-                                    ContentValues values2 = new ContentValues();
-                                    values2.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
-                                    values2.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link2);
-
-                                    context.getContentResolver().insert(
-                                            Contracts.EstateAndImage.CONTENT_URI,
-                                            values1
-                                    );
-                                    context.getContentResolver().insert(
-                                            Contracts.EstateAndImage.CONTENT_URI,
-                                            values2
-                                    );
+//                    asyncTask.execute();
 
 
-
-                                }
-
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Object o) {
-                            super.onPostExecute(o);
-                            onLoaderReset(loader);
-                        }
-                    };
-
-                    asyncTask.execute();
-
-
-                }else{
+//                }else{
 //                    if(markers == null || googleMap == null){
 //                        return;
 //                    }
-                    List<Estate> estates = new ArrayList<>();
-                    while (cursor.moveToNext()){
-                        Estate estate = Estate.newInstance(cursor);
-                        estates.add(estate);
-                    }
-                }
+//                    List<Estate> estates = new ArrayList<>();
+//                    while (cursor.moveToNext()){
+//                        Estate estate = Estate.newInstance(cursor);
+//                        estates.add(estate);
+//                    }
+//                }
             default:
                 break;
         }
+
         cursor.close();
        new Handler().postDelayed(new Runnable() {
            @Override
@@ -232,12 +234,65 @@ public class CursorLoaderCallBack implements LoaderManager.LoaderCallbacks<Curso
 
     }
 
-//    public void setGoogleMap(GoogleMap googleMap) {
-//        this.googleMap = googleMap;
-//    }
-//
-//    public void setMarkers(List<Marker> markers) {
-//        this.markers = markers;
-//    }
+    private void handleEstateLoaderRequest(Cursor estateCursor) {
+       if( estateCursor != null ) {
+           if(estateCursor.getCount() < GoogleMapKits.MAX_MARKERS) {
+
+           } else {
+
+           }
+       }
+    }
+
+    private void gernerate2RadnomsImageForEstate(Estate estate) {
+        Cursor imageCursor = context.getContentResolver().query(
+                                        Contracts.Image.CONTENT_URI,
+                                        null,
+                                        null,
+                                        null,
+                                        null
+        );
+
+        if(imageCursor == null){
+            Log.d(LOG_TAG, "imageCursor == null");
+        }else{
+            int count = imageCursor.getCount();
+            Log.d(LOG_TAG, "imageCursor: " + count);
+            int random1 = -1;
+            int random2 = -1;
+            while (random1 == random2){
+                random1 = new Random().nextInt(count - 1);
+                random2 = new Random().nextInt(count - 1);
+            }
+            String link1 = "";
+            String link2 = "";
+            if(imageCursor.moveToPosition(random1)){
+                link1 = imageCursor.getString(Contracts.Image.INDEX_LINK);
+            }
+            if(imageCursor.moveToPosition(random2)){
+                link2 = imageCursor.getString(Contracts.Image.INDEX_LINK);
+            }
+
+
+
+            ContentValues values1 = new ContentValues();
+            values1.put(Contracts.EstateAndImage.ESTATE_PRIMARY, estate.getPlaceID());
+            values1.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link1);
+            context.getContentResolver().insert(
+                    Contracts.EstateAndImage.CONTENT_URI,
+                    values1
+            );
+
+            ContentValues values2 = new ContentValues();
+            values2.put(Contracts.EstateAndImage.ESTATE_PRIMARY, estate.getPlaceID());
+            values2.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link2);
+            context.getContentResolver().insert(
+                    Contracts.EstateAndImage.CONTENT_URI,
+                    values2
+            );
+
+            imageCursor.close();
+        }
+    }
 
 }
