@@ -1,0 +1,190 @@
+package android.example.com.imageexample;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.example.com.imageexample.Modal.Contracts;
+import android.example.com.imageexample.Modal.Estate.Estate;
+import android.example.com.imageexample.ObserverPattern.EstatePublisher.EstatesPublisher;
+import android.example.com.imageexample.Utils.Constants;
+import android.example.com.imageexample.Utils.ContentProviderUtils;
+import android.example.com.imageexample.Utils.LocationUtils;
+import android.example.com.imageexample.Utils.Utils;
+import android.example.com.imageexample.ui.MainActivity;
+import android.location.Address;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Random;
+
+
+
+public class GenerateEstateLoader extends AsyncTaskLoader<Object> {
+    private static final String LOG_TAG = GenerateEstateLoader.class.getSimpleName();
+    private static final int MAX_ESTATES = 5;
+    public static long MIN_PRICE =  100000;
+    public static long MAX_PRICE =  5000000;
+
+    private Bundle latLngBoundBundle;
+    private double minLat, maxLat, minLng, maxLng;
+    private List<Estate> onScreeenEstates ;
+
+    public GenerateEstateLoader(Context context, Bundle latLngBoundBundle) {
+        super(context);
+        this.latLngBoundBundle = latLngBoundBundle;
+        if(context instanceof MainActivity){
+            MainActivity mainActivity = (MainActivity) context;
+            onScreeenEstates = mainActivity.getOnScreeenEstates();
+        }
+        forceLoad();
+    }
+
+
+
+    @Override
+    public Cursor loadInBackground() {
+        if(latLngBoundBundle == null){
+            Log.d(LOG_TAG, "latLngBoundBundle == null");
+            return null;
+        }
+        Log.d(LOG_TAG, "latLngBoundBundle != null");
+        //--Find max and min latlng
+        setupNorthAndSouthLatLng();
+
+        //--Query all estate in minmax latlng range;
+        String selection = Contracts.Estate.LATITUDE +" >=? AND "
+                + Contracts.Estate.LATITUDE +" <=? AND "
+                + Contracts.Estate.LONGTITUDE +" >=? AND "
+                + Contracts.Estate.LONGTITUDE +" <=?  ";
+
+        String[] selectors = new String[]{
+                String.valueOf(minLat),
+                String.valueOf(maxLat),
+                String.valueOf(minLng),
+                String.valueOf(maxLng),
+        };
+
+        Cursor initCursor = getContext().getContentResolver().query(
+                Contracts.Estate.CONTENT_URI,
+                null,
+                selection,
+                selectors,
+                null
+        );
+
+        if(initCursor.getCount() < MAX_ESTATES){
+            generateNewEsates(initCursor);
+            initCursor = getContext().getContentResolver().query(
+                    Contracts.Estate.CONTENT_URI,
+                    null,
+                    selection,
+                    selectors,
+                    null
+            );
+
+        }
+
+
+        return initCursor;
+    }
+
+
+    /**
+     * @setupNorthAndSouthLatLng
+     */
+    private void setupNorthAndSouthLatLng(){
+        double latNortheast = latLngBoundBundle.getDouble(Constants.BUNDLE_KEY_NORTH_LAT);
+        double lngNortheast = latLngBoundBundle.getDouble(Constants.BUNDLE_KEY_NORTH_LNG);
+        double latSouthwest = latLngBoundBundle.getDouble(Constants.BUNDLE_KEY_SOUTH_LAT);
+        double lngSouthwest = latLngBoundBundle.getDouble(Constants.BUNDLE_KEY_SOUTH_LNG);
+
+        minLat = Math.min(latNortheast, latSouthwest);
+        maxLat = Math.max(latNortheast, latSouthwest);
+
+        minLng = Math.min(lngNortheast, lngSouthwest);
+        maxLng = Math.max(lngNortheast, lngSouthwest);
+    }
+
+
+    /**
+     * @generateNewEsates
+     * @param initCursor
+     */
+    private void generateNewEsates(Cursor initCursor){
+
+        Cursor imagesCursor = getContext().getContentResolver().query(
+                Contracts.Image.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        int needEstatesCount = MAX_ESTATES - initCursor.getCount();
+        for(int i = 0; i < needEstatesCount; i++){
+            double randLat = Utils.getRandom(minLat, maxLat);
+            double randLng = Utils.getRandom(maxLng, minLng);
+
+            Address address = LocationUtils.getAddress(getContext(), new LatLng(randLat, randLng));
+            if(address != null){
+                ContentValues estateValues = ContentProviderUtils.createContentValue(getContext(), address);
+                if(estateValues != null){
+                    getContext().getContentResolver().insert(
+                            Contracts.Estate.CONTENT_URI,
+                            estateValues
+                    );
+                }
+                String placeID = estateValues.getAsString(Contracts.Estate.PLACE_ID);
+                //--Generate 2 random images for estate
+                generate2RandomImagesForEstate(placeID, imagesCursor);
+            }
+
+        }
+    }
+
+    /**
+     * @generate2RandomImagesForEstate
+     * @param placeID
+     */
+    private void generate2RandomImagesForEstate(String placeID, Cursor imagesCursor){
+        int imagesCount = imagesCursor.getCount();
+        int random1 = -1;
+        int random2 = -1;
+        while (random1 == random2) {
+            random1 = new Random().nextInt(imagesCount - 1);
+            random2 = new Random().nextInt(imagesCount - 1);
+        }
+        String link1 = "";
+        String link2 = "";
+
+        if(imagesCursor.moveToPosition(random1)){
+            link1 = imagesCursor.getString(Contracts.Image.INDEX_LINK);
+            ContentValues values = new ContentValues();
+            values.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
+            values.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link1);
+            getContext().getContentResolver().insert(
+                    Contracts.EstateAndImage.CONTENT_URI,
+                    values
+            );
+        }
+        if(imagesCursor.moveToPosition(random2)){
+            link2 = imagesCursor.getString(Contracts.Image.INDEX_LINK);
+            ContentValues values = new ContentValues();
+            values.put(Contracts.EstateAndImage.ESTATE_PRIMARY, placeID);
+            values.put(Contracts.EstateAndImage.IMAGE_PRIMARY, link2);
+            getContext().getContentResolver().insert(
+                    Contracts.EstateAndImage.CONTENT_URI,
+                    values
+            );
+        }
+
+    }
+}

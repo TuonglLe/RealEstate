@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/holo_green_light"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center"
+    tools:context="android.example.com.imageexample.ui.sign_in_up.SignInActivity">
+
+
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp">
+
+        <!--&lt;!&ndash;UserName&ndash;&gt;-->
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="@dimen/text_input_layout_margin"-->
+            <!--app:hintTextAppearance="@style/TextInputLayout"-->
+            <!--&gt;-->
+        <!--<EditText-->
+            <!--android:id="@+id/edit_text_username"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:hint="@string/hint_enter_username"-->
+            <!--android:imeOptions="actionDone"-->
+            <!--android:inputType="textAutoComplete"-->
+            <!--android:padding="@dimen/edit_text_padding"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textColorHint="@android:color/darker_gray"-->
+            <!--android:textSize="15.3sp" />-->
+        <!--</android.support.design.widget.TextInputLayout>-->
+
+        <!--&lt;!&ndash;Password&ndash;&gt;-->
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="@dimen/text_input_layout_margin"-->
+            <!--app:hintTextAppearance="@style/TextInputLayout"-->
+            <!--&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_text_password"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:hint="@string/hint_enter_password"-->
+                <!--android:imeOptions="actionDone"-->
+                <!--android:inputType="textPassword"-->
+                <!--android:padding="@dimen/edit_text_padding"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textColorHint="@android:color/darker_gray"-->
+                <!--android:textSize="15.3sp" />-->
+        <!--</android.support.design.widget.TextInputLayout>-->
+        <!--Google Sign In Button-->
+        <com.google.android.gms.common.SignInButton
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/buton_sign_in_google"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_view_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/text_view_close_margin"
+        android:text="X"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/house_with_window"
+        android:layout_alignTop="@+id/text_view_close"
+        android:layout_marginTop="21dp"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
