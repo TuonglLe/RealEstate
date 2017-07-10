@@ -123,8 +123,15 @@ public class GenerateEstateLoader extends AsyncTaskLoader<Object> {
         for(int i = 0; i < needEstatesCount; i++){
             double randLat = Utils.getRandom(minLat, maxLat);
             double randLng = Utils.getRandom(maxLng, minLng);
-            Estate estate = EstateGenerator.generateEstate(new LatLng(randLat, randLng));
-            Log.d(LOG_TAG, estate == null ? "ranomEstate == null": estate.toString());
+            Estate estate = null;
+            int missed = 0;
+            while (estate == null && missed < 3) {
+                estate = EstateGenerator.generateEstate(new LatLng(randLat, randLng));
+                Log.d(LOG_TAG, estate == null ? "ranomEstate == null": estate.toString());
+                if( estate == null ) {
+                    missed++;
+                }
+            }
 
             if (estate != null) {
 
