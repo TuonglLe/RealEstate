@@ -10,6 +10,7 @@ import android.example.com.imageexample.ObserverPattern.PredicitonPublisher;
 import android.example.com.imageexample.ObserverPattern.PredictionObserver;
 import android.example.com.imageexample.Utils.Constants;
 import android.example.com.imageexample.Utils.LocationUtils;
+import android.hardware.input.InputManager;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import android.example.com.imageexample.R;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -80,6 +83,8 @@ public class SearchFragment extends BaseFragment implements PredictionObserver, 
             recyclerView.setAdapter(predictionsAdapter);
         }
 
+        showInput();
+
     }
 
     @Override
@@ -87,15 +92,6 @@ public class SearchFragment extends BaseFragment implements PredictionObserver, 
         return R.layout.fragment_search;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -134,7 +130,19 @@ public class SearchFragment extends BaseFragment implements PredictionObserver, 
         });
     }
 
+    private void showInput() {
+        getInputMethodManager().toggleSoftInput(
+                InputMethodManager.SHOW_FORCED,
+                InputMethodManager.HIDE_IMPLICIT_ONLY
+        );
+    }
 
+    private void hideInput() {
+    }
+
+    private InputMethodManager getInputMethodManager() {
+        return (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -147,7 +155,6 @@ public class SearchFragment extends BaseFragment implements PredictionObserver, 
         SearchableInfo searchableInfo = searchManager.getSearchableInfo(getActivity().getComponentName());
         searchView.setSearchableInfo(searchableInfo);
         searchView.setIconified(false);
-
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {

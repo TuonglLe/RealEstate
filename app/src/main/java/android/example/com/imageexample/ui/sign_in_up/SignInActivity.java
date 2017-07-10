@@ -93,10 +93,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        progressDialog.show();
+
         if(requestCode == REQUEST_CODE_FOR_GOOGLE_SIGN_IN){
             GoogleSignInResult signInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if(signInResult.isSuccess()){
+                progressDialog.show();
                 GoogleSignInAccount googleSignInAccount = signInResult.getSignInAccount();
                 final GoogleAuthCredential googleAuthCredential = (GoogleAuthCredential) GoogleAuthProvider.getCredential(
                         googleSignInAccount.getIdToken(),

@@ -199,15 +199,17 @@ public class GoogleMapKits implements OnMapReadyCallback, GoogleMap.OnCameraIdle
                 String address = onScreenEstateCursor.getString(Contracts.Estate.INDEX_ADDRESS);
 
                 Log.d(LOG_TAG, "lat: " + lat + " - lng:" + lng);
-                Marker marker = mMap.addMarker(
-                        new MarkerOptions().title(address)
-                                .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
-                                .position(new LatLng(lat, lng))
-                                .alpha(0.8f)
-                );
-                markers.add(marker);
-                GoogleMapKitsPublisher.getInstance().setGoogleMapKits(this);
-                GoogleMapKitsPublisher.getInstance().notifyData();
+                if(mMap != null) {
+                    Marker marker = mMap.addMarker(
+                            new MarkerOptions().title(address)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                                    .position(new LatLng(lat, lng))
+                                    .alpha(0.8f)
+                    );
+                    markers.add(marker);
+                    GoogleMapKitsPublisher.getInstance().setGoogleMapKits(this);
+                    GoogleMapKitsPublisher.getInstance().notifyData();
+                }
             }
         }
         Log.d(LOG_TAG, "markers.size(): " + markers.size());
